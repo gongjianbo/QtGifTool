@@ -10,7 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     //测试接口是否可以调用
-    qDebug()<<GifErrorString(D_GIF_ERR_NOT_GIF_FILE);
+    qDebug()<<"Version:"<<GIFLIB_MAJOR<<GIFLIB_MINOR<<GIFLIB_RELEASE;
+    qDebug()<<"GifErrorString:"<<GifErrorString(D_GIF_ERR_NOT_GIF_FILE);
 }
 
 MainWindow::~MainWindow()
