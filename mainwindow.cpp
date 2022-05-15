@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnDecGif,&QPushButton::clicked,this,&MainWindow::decodeGif);
     connect(ui->btnDecGifStream,&QPushButton::clicked,this,&MainWindow::decodeGifStream);
     //点击选择图片列表
+    //TODO 待完成
+    ui->btnSelectImg->setEnabled(false);
     connect(ui->btnSelectImg,&QPushButton::clicked,this,&MainWindow::selectImages);
     //点击生成Gif
     connect(ui->btnEncGif,&QPushButton::clicked,this,&MainWindow::encodeGif);
@@ -144,8 +146,12 @@ void MainWindow::decodeGif()
                     //qDebug()<<"delay"<<gcb.DelayTime;
                     //qDebug()<<"transparent index"<<gcb.TransparentColor;
                     trans_color=gcb.TransparentColor;
-                    //DelayTime的单位为10 ms
-                    gif_info.interval=gcb.DelayTime*10;
+                    //取最小的那个间隔
+                    //暂时只取单个间隔时间，虽然很多gif最后一帧延时时间更长
+                    if(gif_info.interval<=0 || gif_info.interval>gcb.DelayTime*10){
+                        //DelayTime的单位为10 ms，乘10转为ms
+                        gif_info.interval=gcb.DelayTime*10;
+                    }
                 }
                 else if (!last
                          && ep->Function == APPLICATION_EXT_FUNC_CODE
@@ -365,7 +371,12 @@ void MainWindow::decodeGifStream()
                     }
                     trans_color = gcb.TransparentColor;
                     //qDebug()<<"gcb:"<<gcb.DelayTime<<gcb.TransparentColor;
-                    gif_info.interval=gcb.DelayTime*10;
+                    //取最小的那个间隔
+                    //暂时只取单个间隔时间，虽然很多gif最后一帧延时时间更长
+                    if(gif_info.interval<=0 || gif_info.interval>gcb.DelayTime*10){
+                        //DelayTime的单位为10 ms，乘10转为ms
+                        gif_info.interval=gcb.DelayTime*10;
+                    }
                 }
                 while (extension != NULL)
                 {
@@ -495,6 +506,7 @@ void MainWindow::encodeGif()
 
             GraphicsControlBlock gcb;
             gcb.DisposalMode = DISPOSAL_UNSPECIFIED;
+            //DelayTime的单位为10 ms
             gcb.DelayTime = interval/10;
             gcb.UserInputFlag = false;
             gcb.TransparentColor = NO_TRANSPARENT_COLOR;
